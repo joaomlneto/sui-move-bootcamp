@@ -1,27 +1,40 @@
 ---
-name: Requesting a Feature or Improvement
-about: "For feature requests. Please search for existing issues first."
-title: ''
-labels: feat
+name: Content or Feature Request
+about: Suggest new content, improvements to existing lessons, or tooling enhancements
+title: '[Request] '
+labels: enhancement
 assignees: ''
 
 ---
 
-## Instructions
+## Request Type
 
-Please fill out the template below to the best of your ability and include a label indicating which tool/service you were working with when you encountered the problem.
+- [ ] New lesson or module
+- [ ] Improve existing explanation
+- [ ] Add more code examples
+- [ ] Add or improve exercises
+- [ ] Add diagrams or visual aids
+- [ ] Tooling or scaffold improvement
+- [ ] TypeScript/SDK example improvement
 
-### Issue To Be Solved
-(Replace This Text: Please present a concise description of the problem to be addressed by this feature request. Please be clear what parts of the problem are considered to be in-scope and out-of-scope.)
+## Module (if applicable)
 
-### (Optional): Suggest A Solution
-(Replace This Text: A concise description of your preferred solution. Things to address include:
-* Details of the technical implementation
-* Tradeoffs made in design decisions
-* Caveats and considerations for the future
+<!-- Which module does this relate to? e.g., C1, G3, or "new module" -->
 
-If there are multiple solutions, please present each one separately. Save comparisons for the very end.)
-  
-### (Optional): Context
+**Module**:
 
-<what are you currently working on that this is blocking?>
+## Description
+
+<!-- What would you like to see added or changed? -->
+
+## Motivation
+
+<!-- Why would this help learners? What gap does it fill? -->
+
+## Suggested Approach (optional)
+
+<!-- If you have ideas on how to implement this, describe them here. -->
+
+## Context (optional)
+
+<!-- Any additional context, references, or examples from other resources. -->

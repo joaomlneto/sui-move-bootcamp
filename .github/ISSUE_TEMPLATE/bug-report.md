@@ -1,28 +1,54 @@
 ---
-name: Reporting a Problem/Bug
-about: Reporting a Problem/Bug
-title: ''
+name: Report an Issue
+about: Report broken code, incorrect examples, or compilation errors in bootcamp materials
+title: '[Bug] '
 labels: fix
 assignees: ''
 
 ---
 
-## Instructions
+## Issue Type
 
-Please fill out the template below to the best of your ability and include a label indicating which tool/service you were working with when you encountered the problem.
+- [ ] Code doesn't compile or run
+- [ ] Incorrect or outdated code example
+- [ ] Broken dependency or import
+- [ ] Test failure
+- [ ] Mismatch between lesson text and code
+- [ ] Typo or formatting error
 
-### Problem
+## Module / Location
 
-<what is the problem you've encountered?> 
+<!-- Which module is affected? e.g., B2, E1, H2 -->
 
-### Steps to Reproduce 
+**Module**:
+**File(s)**:
 
-<share any logs/screenshots or steps to replicate>
+## Branch
 
-### Acceptance Criteria
+- [ ] `main` (scaffolded version)
+- [ ] Solution branch (specify):
 
-<if any>
-  
-### Context
+## Description
 
-<what are you currently working on that this is blocking?>
+<!-- Describe the issue clearly. Include any error messages or unexpected behavior. -->
+
+## Steps to Reproduce
+
+<!-- How can we reproduce this? Include commands run, e.g., `sui move build` or `sui move test` -->
+
+1.
+2.
+3.
+
+## Expected Behavior
+
+<!-- What should happen instead? -->
+
+## Environment (optional)
+
+- Sui CLI version (`sui --version`):
+- OS:
+
+## Suggested Fix (optional)
+
+<!-- If you have an idea of how to fix it, describe it here. -->
