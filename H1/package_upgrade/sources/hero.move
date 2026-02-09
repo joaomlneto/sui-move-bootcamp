@@ -9,8 +9,8 @@ use sui::package;
 use package_upgrade::blacksmith::{Shield, Sword};
 use package_upgrade::version::Version;
 
-const EAlreadyEquipedShield: u64 = 0;
-const EAlreadyEquipedSword: u64 = 1;
+const EAlreadyEquippedShield: u64 = 0;
+const EAlreadyEquippedSword: u64 = 1;
 
 public struct HERO() has drop;
 
@@ -26,7 +26,7 @@ fun init(otw: HERO, ctx: &mut TxContext) {
 }
 
 /// Anyone can mint a hero.
-/// Hero starts with 100 heath and 10 stamina.
+/// Hero starts with 100 health and 10 stamina.
 public fun mint_hero(version: &Version, ctx: &mut TxContext): Hero {
     version.check_is_valid();
     Hero {
@@ -36,15 +36,11 @@ public fun mint_hero(version: &Version, ctx: &mut TxContext): Hero {
     }
 }
 
-// Task: Implement mint_hero_v2 that accepts payment
-// public fun mint_hero_v2(version: &Version, payment: Coin<SUI>, ctx: &mut TxContext): Hero {
-// }
-
 /// Hero can equip a single sword.
 public fun equip_sword(self: &mut Hero, version: &Version, sword: Sword) {
     version.check_is_valid();
     if (df::exists_(&self.id, b"sword".to_string())) {
-        abort(EAlreadyEquipedSword)
+        abort(EAlreadyEquippedSword)
     };
     self.add_dof(b"sword".to_string(), sword)
 }
@@ -53,7 +49,7 @@ public fun equip_sword(self: &mut Hero, version: &Version, sword: Sword) {
 public fun equip_shield(self: &mut Hero, version: &Version, shield: Shield) {
     version.check_is_valid();
     if (df::exists_(&self.id, b"shield".to_string())) {
-        abort(EAlreadyEquipedShield)
+        abort(EAlreadyEquippedShield)
     };
     self.add_dof(b"shield".to_string(), shield)
 }
@@ -67,15 +63,15 @@ public fun stamina(self: &Hero): u64 {
 }
 
 /// Returns the sword the hero has equipped.
-/// Aborts if it does not exists
+/// Aborts if it does not exist.
 public fun sword(self: &Hero): &Sword {
-    dof::borrow(&self.id, b"sword")
+    dof::borrow(&self.id, b"sword".to_string())
 }
 
 /// Returns the shield the hero has equipped.
-/// Aborts if it does not exists
+/// Aborts if it does not exist.
 public fun shield(self: &Hero): &Shield {
-    dof::borrow(&self.id, b"shield")
+    dof::borrow(&self.id, b"shield".to_string())
 }
 
 /// Generic add dynamic object field to the hero.

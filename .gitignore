@@ -14,4 +14,8 @@
 .history
 build
 node_modules
-target 
+target
+
+# claude
+CLAUDE.md
+.claude/
