@@ -788,14 +788,15 @@ You will work with the `package_upgrade/` Hero game package:
 ---
 
 # Step 1: Setup
-```bash
-# Make sure you have a local network configured as an environment
-sui client new-env --alias localnet --rpc http://127.0.0.1:9000
-```
 
 ```bash
 # Start the local network
 RUST_LOG="off,sui_node=info" sui start --with-faucet --force-regenesis
+```
+
+```bash
+# Make sure you have a local network configured as an environment
+sui client new-env --alias localnet --rpc http://127.0.0.1:9000
 ```
 
 ```bash
@@ -860,7 +861,7 @@ You should see a `Hero` with *health: 100* and *stamina: 10*.
 
 ### Bump VERSION
 
-Change constant from `1` to `2` in `version.move`.
+Change constant from `1` to `2` in `hero_version.move`.
 
 </div>
 <div class="col">
@@ -930,7 +931,6 @@ public fun migrate(self: &mut HeroVersion) {
 # Step 5: Upgrade
 
 ```bash
-sui move build
 sui client test-upgrade \
   --upgrade-capability <UPGRADE_CAP_ID>
 ```
