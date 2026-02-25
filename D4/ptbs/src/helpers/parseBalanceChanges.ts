@@ -1,5 +1,5 @@
-import { SuiClientTypes } from "@mysten/sui/client";
-import { normalizeSuiAddress, SUI_TYPE_ARG } from "@mysten/sui/utils";
+import {SuiClientTypes} from "@mysten/sui/client";
+import {normalizeSuiAddress, SUI_TYPE_ARG} from "@mysten/sui/utils";
 
 interface Args {
   balanceChanges: SuiClientTypes.BalanceChange[];
@@ -21,23 +21,21 @@ export const parseBalanceChanges = ({
   senderAddress,
   recipientAddress,
 }: Args): Response => {
-  const rec = balanceChanges.find((balance) => {
+  const normalizedSenderAddress = normalizeSuiAddress(senderAddress);
+  const normalizedRecipientAddress = normalizeSuiAddress(recipientAddress);
+
+  const recipientAmount = balanceChanges.find(balance => {
     const owner = balance.address;
-    return (
-      owner === normalizeSuiAddress(recipientAddress) &&
-      balance.coinType === SUI_TYPE_ARG
-    );
+    return owner === normalizedRecipientAddress && balance.coinType === SUI_TYPE_ARG;
   })?.amount;
 
-  const sender = balanceChanges.find((balance) => {
+  const senderAmount = balanceChanges.find(balance => {
     const owner = balance.address;
-    return (
-      owner === senderAddress && balance.coinType === SUI_TYPE_ARG
-    );
+    return owner === normalizedSenderAddress && balance.coinType === SUI_TYPE_ARG;
   })?.amount;
 
   return {
-    recipientSUIBalanceChange: rec ? parseInt(rec) : 0,
-    senderSUIBalanceChange: sender ? parseInt(sender) : 0,
-  };
+    recipientSUIBalanceChange: Number(recipientAmount ?? 0),
+    senderSUIBalanceChange: Number(senderAmount ?? 0)
+  }
 };
