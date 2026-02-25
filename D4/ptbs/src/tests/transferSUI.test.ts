@@ -1,9 +1,9 @@
-import { MIST_PER_SUI } from "@mysten/sui/utils";
-import { ENV } from "../env";
-import { transferSUI } from "../helpers/transferSUI";
-import { parseBalanceChanges } from "../helpers/parseBalanceChanges";
-import { getAddress } from "../helpers/getAddress";
-import { SuiClientTypes } from "@mysten/sui/client";
+import {SuiClientTypes} from "@mysten/sui/client";
+import {MIST_PER_SUI, normalizeSuiAddress} from "@mysten/sui/utils";
+import {ENV} from "../env";
+import {getAddress} from "../helpers/getAddress";
+import {parseBalanceChanges} from "../helpers/parseBalanceChanges";
+import {transferSUI} from "../helpers/transferSUI";
 
 const AMOUNT = 0.01 * Number(MIST_PER_SUI);
 
@@ -15,7 +15,7 @@ describe("Transfer SUI amount", () => {
     txResult = await transferSUI({
       amount: AMOUNT,
       senderSecretKey: ENV.USER_SECRET_KEY,
-      recipientAddress: ENV.RECIPIENT_ADDRESS,
+      recipientAddress: normalizeSuiAddress(ENV.RECIPIENT_ADDRESS),
     });
     if(!txResult.Transaction) throw new Error("Transaction failed");
     txResponse = txResult.Transaction;
@@ -32,7 +32,7 @@ describe("Transfer SUI amount", () => {
     const balanceChanges = parseBalanceChanges({
       balanceChanges: txResponse.balanceChanges!,
       senderAddress: getAddress({ secretKey: ENV.USER_SECRET_KEY }),
-      recipientAddress: ENV.RECIPIENT_ADDRESS,
+      recipientAddress: normalizeSuiAddress(ENV.RECIPIENT_ADDRESS),
     });
     expect(balanceChanges.recipientSUIBalanceChange).toBe(AMOUNT);
     expect(balanceChanges.senderSUIBalanceChange).toBeLessThan(-AMOUNT);

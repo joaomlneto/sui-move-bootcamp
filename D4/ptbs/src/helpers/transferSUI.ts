@@ -1,7 +1,8 @@
-import { coinWithBalance, Transaction } from "@mysten/sui/transactions";
-import { suiClient } from "../suiClient";
-import { getSigner } from "./getSigner";
-import { SuiClientTypes } from "@mysten/sui/client";
+import {SuiClientTypes} from "@mysten/sui/client";
+import {coinWithBalance, Transaction} from "@mysten/sui/transactions";
+import {SUI_TYPE_ARG} from "@mysten/sui/utils";
+import {suiClient} from "../suiClient";
+import {getSigner} from "./getSigner";
 
 interface Args {
   amount: number;
@@ -20,7 +21,13 @@ export const transferSUI = async ({
 }: Args): Promise<SuiClientTypes.TransactionResult> => {
   const tx = new Transaction();
 
-  // TODO: Add the commands to the transaction
+  tx.transferObjects([
+      coinWithBalance({
+        type: SUI_TYPE_ARG,
+        balance: amount,
+        useGasCoin: true,
+      })
+  ], recipientAddress);
 
   return suiClient.signAndExecuteTransaction({
     transaction: tx,
