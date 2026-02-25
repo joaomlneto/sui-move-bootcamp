@@ -1,5 +1,5 @@
-import { SuiClientTypes } from "@mysten/sui/client";
-import { ENV } from "../env";
+import {SuiClientTypes} from "@mysten/sui/client";
+import {ENV} from "../env";
 
 interface Args {
   objectChanges: SuiClientTypes.TransactionEffects["changedObjects"];
@@ -26,32 +26,22 @@ export const parseCreatedObjectsIds = ({ objectChanges, objectTypes }: Args): Re
   const SWORD_TYPE = `${ENV.PACKAGE_ID}::blacksmith::Sword`;
   const HERO_TYPE = `${ENV.PACKAGE_ID}::hero::Hero`;
 
-  let swordsIds: string[] = [];
-  let heroesIds: string[] = [];
+  const swordsIds : string[] = [];
+  const heroesIds : string[] = [];
 
-  // look for created objects which are swords or heroes
   for (const objectChange of objectChanges) {
-    if (objectChange.idOperation !== "Created") {
-      // skip non-created objects
+    if (objectChange.idOperation != "Created") {
       continue;
     }
-
-    // Get the object id and type
-    // all the objects in effects.changedObjects are always included in objectTypes, so no need to check if it exists
-    // and could not throw error, but we leave the optional check for readability and better handling
     const objectId = objectChange.objectId;
     const objectType = objectTypes?.[objectId];
 
-    // check(filter) if the object is a sword or a hero, and push
-    if(objectType === SWORD_TYPE) {
+    if (objectType === SWORD_TYPE) {
       swordsIds.push(objectId);
-    } else if(objectType === HERO_TYPE) {
+    } else if (objectType === HERO_TYPE) {
       heroesIds.push(objectId);
     }
   }
 
-  return {
-    swordsIds,
-    heroesIds
-  };
+  return {swordsIds, heroesIds};
 };
