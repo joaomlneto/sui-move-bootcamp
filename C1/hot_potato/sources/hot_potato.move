@@ -35,7 +35,7 @@ fun init(ctx: &mut TxContext) {
 }
 
 public fun borrow_potato(): HotPotato {
-    // TODO initialize the HotPotato
+    HotPotato { payment_approved: false }
 }
 
 public fun process_payment(
@@ -43,11 +43,18 @@ public fun process_payment(
     contract_balance: &mut ContractBalance,
     payment: Coin<SUI>,
 ) {
-    // TODO process the payment
+    let payment_value = payment.value();
+    if (payment_value >= MIN_PAYMENT) {
+        hot_potato.payment_approved = true;
+    };
+    contract_balance.balance.join(payment.into_balance());
 }
 
 public fun mint_hero(hot_potato: HotPotato, ctx: &mut TxContext): Hero {
-    // TODO mint the hero
+    let HotPotato { payment_approved } = hot_potato;
+    assert!(payment_approved == true, EInvalidPayment);
+    // mint the hero
+    Hero { id: object::new(ctx), name: b"Batman".to_string() }
 }
 
 #[test_only]
@@ -57,7 +64,7 @@ const USER: address = @0x2;
 #[test_only]
 use sui::test_scenario as ts;
 #[test_only]
-use sui::test_utils;
+use std::unit_test::destroy;
 
 // Test with sufficient payment - PASSES
 #[test]
@@ -82,7 +89,7 @@ fun test_hot_potato_success() {
     let hero = mint_hero(potato, scenario.ctx());
 
     // Verify that the hero was created
-    test_utils::destroy(hero);
+    destroy(hero);
 
     ts::return_shared(contract_balance);
     scenario.end();
