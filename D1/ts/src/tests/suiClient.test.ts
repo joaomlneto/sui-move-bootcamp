@@ -1,8 +1,8 @@
-import { SuiClientTypes } from "@mysten/sui/client";
-import { SuiGrpcClient } from "@mysten/sui/grpc";
-import { getFaucetHost, requestSuiFromFaucetV2 } from "@mysten/sui/faucet";
-import { MIST_PER_SUI } from "@mysten/sui/utils";
-import { ENV } from "../env";
+import {SuiClientTypes} from "@mysten/sui/client";
+import {getFaucetHost, requestSuiFromFaucetV2} from "@mysten/sui/faucet";
+import {SuiGrpcClient} from "@mysten/sui/grpc";
+import {MIST_PER_SUI} from "@mysten/sui/utils";
+import {ENV} from "../env";
 
 const mistToSui = (b: SuiClientTypes.Balance) =>
   Number(b.balance) / Number(MIST_PER_SUI);
@@ -18,6 +18,9 @@ test("SuiClient: getBalance + faucet (devnet)", async () => {
   });
 
   // 3) Balance BEFORE
+  const before = await suiClient.getBalance({
+    owner: MY_ADDRESS,
+  }).then((b) => b.balance);
 
   // 4) Request from faucet (devnet)
   await requestSuiFromFaucetV2({
@@ -29,6 +32,9 @@ test("SuiClient: getBalance + faucet (devnet)", async () => {
   await new Promise((r) => setTimeout(r, 2000));
 
   // 5) Balance AFTER (no polling, just one check)
+  const after = await suiClient.getBalance({
+    owner: MY_ADDRESS,
+  }).then((b) => b.balance);
 
   // 6) Assert it increased
   expect(Number(after.balance)).toBeGreaterThan(
