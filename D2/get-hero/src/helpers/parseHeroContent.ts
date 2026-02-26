@@ -1,4 +1,4 @@
-import { SuiClientTypes } from "@mysten/sui/client";
+import {SuiClientTypes} from "@mysten/sui/client";
 
 export interface Hero {
   id: string;
@@ -7,21 +7,21 @@ export interface Hero {
 }
 
 interface HeroContent {
-  id: string ;
-  health: string;
-  stamina: string;
+  fields: {
+    id: { id: string };
+    health: string;
+    stamina: string;
+  };
 }
 
 /**
  * Parses the content of a hero object in a SuiObjectResponse.
  * Maps it to a Hero object.
  */
-export const parseHeroContent = (objectResponse: SuiClientTypes.GetObjectResponse): Hero => {
-  const content = objectResponse.object.json as unknown as HeroContent;
-
-  return {
-    id : content.id,
-    health : content.health,
-    stamina: content.stamina,
-  } as Hero;
+export const parseHeroContent = (objectResponse: SuiClientTypes.GetObjectResponse<any>): Hero => {
+  const fields = objectResponse.object.json;
+  if (!fields) {
+    throw new Error("No fields found in hero object");
+  }
+  return fields as unknown as Hero;
 };
