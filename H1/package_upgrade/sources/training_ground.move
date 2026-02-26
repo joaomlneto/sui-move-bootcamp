@@ -2,11 +2,12 @@ module package_upgrade::training_ground;
 
 use package_upgrade::hero::Hero;
 
-const VERSION: u64 = 1;
-const XP_PER_TRAINING: u64 = 50;
+const VERSION: u64 = 2;
+const XP_PER_TRAINING: u64 = 30;
 
 const EInvalidPackageVersion: u64 = 0;
 const ENotEnoughXp: u64 = 1;
+const EUseTrainV2Instead: u64 = 2;
 
 /// Shared object that tracks the package version and holds game
 /// configuration. Every public entry point checks its version so
@@ -26,15 +27,24 @@ fun init(ctx: &mut TxContext) {
     })
 }
 
+public fun migrate(self: &mut TrainingGround) {
+    self.version = VERSION;
+    self.xp_per_level = 150; // rebalanced from 100
+}
+
 /// Aborts if the package version does not match the shared object.
 public fun check_is_valid(self: &TrainingGround) {
     assert!(self.version == VERSION, EInvalidPackageVersion);
 }
 
 /// Train a hero, granting XP.
-public fun train(self: &TrainingGround, hero: &mut Hero) {
+public fun train(_: &TrainingGround, _: &mut Hero) {
+    abort EUseTrainV2Instead // deprecated
+}
+
+public fun train_v2(self: &TrainingGround, hero: &mut Hero) {
     self.check_is_valid();
-    hero.add_xp(XP_PER_TRAINING);
+    hero.add_xp(XP_PER_TRAINING); // reduced from 50
 }
 
 /// Level up a hero. Requires enough accumulated XP.
