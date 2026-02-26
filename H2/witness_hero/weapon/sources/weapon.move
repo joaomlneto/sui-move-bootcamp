@@ -37,11 +37,8 @@ public fun mint_weapon<W: drop>(
     ctx: &mut TxContext,
 ): Weapon {
     let caller_witness = type_name::with_original_ids<W>().into_string();
-    assert!(
-        allow_list.witness_types.contains(caller_witness) &&
-        *allow_list.witness_types.borrow(caller_witness),
-        EInvalidCaller,
-    );
+    assert!(allow_list.witness_types.contains(caller_witness)
+    && *allow_list.witness_types.borrow(caller_witness), EInvalidCaller);
 
     Weapon {
         id: object::new(ctx),
