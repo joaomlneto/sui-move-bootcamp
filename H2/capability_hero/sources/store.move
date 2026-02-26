@@ -14,7 +14,7 @@ const ENotEnoughFunds: u64 = 2;
 
 public struct StoreAdminCap has key {
     id: UID,
-    // TODO: add a property to store the store id
+    store: ID,
 }
 
 public fun new_armor(): Armor {
@@ -33,11 +33,27 @@ public struct HeroStore<phantom T: store> has key, store {
 }
 
 public fun build_store<T: store>(item_price: u64, ctx: &mut TxContext) {
-    // TODO: Initialize the store and the associated admin cap
+    // create a HeroStore<T> with an empty items table, the given price, and a zero balance
+    let store = HeroStore<T> {
+        id: object::new(ctx),
+        items: table::new(ctx),
+        item_price,
+        funds: balance::zero(),
+    };
+    // create a StoreAdminCap whose store field matches the new store's id
+    let admin_cap = StoreAdminCap {
+        id: object::new(ctx),
+        store: store.id.to_inner(),
+    };
+    // transfer the admin cap to the transaction sender
+    transfer::transfer(admin_cap, ctx.sender());
+    // share the store so anyone can buy from it
+    transfer::share_object(store);
 }
 
 public fun add_item<T: store>(store: &mut HeroStore<T>, admin_cap: &StoreAdminCap, item: T) {
-    // TODO: add a check to ensure the admin cap is valid
+    // check the admin cap is valid
+    assert!(admin_cap.store == store.id.to_inner(), ENotAuthorized);
     let items = &mut store.items;
     let len = items.length();
     table::add(items, len, item);
@@ -48,8 +64,8 @@ public fun collect_funds<T: store>(
     admin_cap: &StoreAdminCap,
     ctx: &mut TxContext,
 ): Coin<SUI> {
-    // TODO: add a check to ensure the admin cap is valid
-
+    // check the admin cap is valid
+    assert!(admin_cap.store == store.id.to_inner(), ENotAuthorized);
     let funds = store.funds.withdraw_all();
     funds.into_coin(ctx)
 }
