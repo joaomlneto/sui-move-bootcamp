@@ -20,11 +20,13 @@ public fun mint_hero(name: String, ctx: &mut TxContext): Hero {
     }
 }
 
+// Purchase weapon from HeroStore<Weapon> and equips it to Hero
 public fun buy_weapon(hero: &mut Hero, store: &mut HeroStore<Weapon>, coin: Coin<SUI>) {
     let weapon = store.buy_item<Weapon>(coin);
     hero.weapon = option::some(weapon);
 }
 
+// Purchase armor from HeroStore<Armor> and equips it to Hero
 public fun buy_armor(hero: &mut Hero, store: &mut HeroStore<Armor>, coin: Coin<SUI>) {
     let armor = store.buy_item<Armor>(coin);
     hero.armor = option::some(armor);
@@ -40,7 +42,6 @@ use sui::coin;
 use sui::{test_scenario as ts};
 #[test_only]
 use std::unit_test::assert_eq;
-
 #[test_only]
 const WEAPON_STORE_OWNER: address = @0xAA;
 #[test_only]
