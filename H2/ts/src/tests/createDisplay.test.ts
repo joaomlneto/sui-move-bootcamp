@@ -1,6 +1,6 @@
-import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
-import { Transaction } from "@mysten/sui/transactions";
-import { ENV } from "../env";
+import {getFullnodeUrl, SuiClient} from "@mysten/sui/client";
+import {Transaction} from "@mysten/sui/transactions";
+import {ENV} from "../env";
 
 test("Create Display - Devnet", async () => {
 
@@ -9,30 +9,34 @@ test("Create Display - Devnet", async () => {
 
     let keys = ["name", "image_url", "description"];
     let values = [
-        "{name}", 
-        "https://aggregator.walrus-testnet.walrus.space/v1/blobs/{blob_id}", 
+        "{name}",
+        "https://aggregator.walrus-testnet.walrus.space/v1/blobs/{blob_id}",
         "{name} - A true Hero of the Sui ecosystem!"
     ];
 
-    //TODO: Create a new display object
+    // create the display object
     let display = tx.moveCall({
-            target: '0x2::display::new_with_fields',
-            arguments: [tx.object(ENV.PUBLISHER_ID), tx.pure.vector("string", keys), tx.pure.vector("string", values)],
-            typeArguments: [`${ENV.DISPLAY_PACKAGE_ID}::hero::Hero`],
-        });
-    
-    //TODO: Update the display object version
+        target: "0x2::display::new_with_fields",
+        arguments: [
+            tx.object(ENV.PUBLISHER_ID),
+            tx.pure.vector("string", keys),
+            tx.pure.vector("string", values),
+        ],
+        typeArguments: [`${ENV.DISPLAY_PACKAGE_ID}::hero::Hero`],
+    })
+
+    // update the display version
     tx.moveCall({
-        target: '0x2::display::update_version',
+        target: "0x2::display::update_version",
         arguments: [display],
         typeArguments: [`${ENV.DISPLAY_PACKAGE_ID}::hero::Hero`],
     });
 
-    //TODO: Transfer the display object to your address
-    tx.transferObjects([display], tx.pure.address("0xf38a463604d2db4582033a09db6f8d4b846b113b3cd0a7c4f0d4690b3fe6aa37"));
+    // Transfer the display object to your address
+    tx.transferObjects([display], tx.pure.address(ENV.MY_ADDRESS))
 
     tx.setGasBudget(1000000000);
-    tx.setSender("0xf38a463604d2db4582033a09db6f8d4b846b113b3cd0a7c4f0d4690b3fe6aa37");
+    tx.setSender(ENV.MY_ADDRESS);
 
     let buildTx = await tx.build({client: suiClient, onlyTransactionKind: false});
 
