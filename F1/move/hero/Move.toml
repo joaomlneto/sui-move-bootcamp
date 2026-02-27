@@ -1,3 +1,6 @@
 [package]
 name = "hero"
 edition = "2024"
+
+[environments]
+devnet = "a63d14dc"
