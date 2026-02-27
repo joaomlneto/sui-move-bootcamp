@@ -276,22 +276,22 @@ Read the H2 exercise code and answer:
 
 - Write pseudocode showing how module A can call a function in module B using a witness to prove its identity.
 
-  - ``````
+  - ```ts
     module project::module_a;
     public struct Witness has drop {}
     public entry fun call_module_b() {
     	let witness = Witness {};
     	project::module_b::protected_function(witness);
     }
-    ``````
+    ```
 
-  - ``````
+  - ```ts
     module project::module_b;
     use project::module::Witness;
     public fun protected_function(_: Witness) {
     	do_something();
     }
-    ``````
+    ```
 
   - or use `protected_function<W: drop>(_: W)` if *any* witness is OK. This allows to e.g. create a 'registry' where each issued object is tagged by which module issued it…
 
