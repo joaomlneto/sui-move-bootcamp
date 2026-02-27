@@ -10,10 +10,10 @@ export function AllHeroesList() {
   const client = useCurrentClient();
   const {data : heroRegistryAddress} = useHeroRegistryAddress();
 
-  const { data : heroIds, isPending, error } = useQuery<{ids: string[]}>({
+  const { data : heroIds, isPending, error } = useQuery<string[]>({
     queryKey: ["heroRegistry"],
     queryFn: async () => {
-      if (!account) return null;
+      if (!account) return [];
 
       const response = await client.getObject({
         objectId: heroRegistryAddress!,
