@@ -4,7 +4,7 @@ import {useQueryClient} from "@tanstack/react-query";
 import {CurrencyIcon} from "lucide-react";
 import {Card, CardHeader, CardTitle} from "./components/ui/card.tsx";
 
-export const MintNFTForm = () => {
+export const MintNFTButton = () => {
     const client = useCurrentClient();
     const account = useCurrentAccount();
     const { signAndExecuteTransaction } = useDAppKit()
@@ -16,7 +16,6 @@ export const MintNFTForm = () => {
         if (!account) return;
 
         const tx = new Transaction();
-
         const hero = tx.moveCall({
             target: `0xc413c2e2c1ac0630f532941be972109eae5d6734e540f20109d75a59a1efea1e::hero::mint_hero`,
             arguments: [],

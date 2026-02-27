@@ -1,5 +1,5 @@
 import {ConnectButton} from "@mysten/dapp-kit-react";
-import {MintNFTForm} from "./MintNFTForm.tsx";
+import {MintNFTButton} from "./MintNFTButton.tsx";
 import {WalletStatus} from "./WalletStatus";
 
 function App() {
@@ -13,7 +13,7 @@ function App() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-          <MintNFTForm />
+          <MintNFTButton />
         <WalletStatus />
       </main>
     </div>
