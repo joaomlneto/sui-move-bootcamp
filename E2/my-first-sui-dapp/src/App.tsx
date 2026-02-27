@@ -1,5 +1,5 @@
 import {ConnectButton} from "@mysten/dapp-kit-react";
-import MintNFTForm from "./components/ui/MintNFTForm.tsx";
+import {MintNFTForm} from "./MintNFTForm.tsx";
 import {WalletStatus} from "./WalletStatus";
 
 function App() {
