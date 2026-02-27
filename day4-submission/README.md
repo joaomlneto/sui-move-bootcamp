@@ -66,14 +66,14 @@ export const MintNFTButton = () => {
   }
 
   return (<div className="m-auto d-block w-50 p-5 text-center" onClick={mintNFT}>
-  <Card>
-          <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-  <CurrencyIcon className="h-5 w-5" />
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <CurrencyIcon className="h-5 w-5" />
           Mint NFT
-  </CardTitle>
-  </CardHeader>
-  </Card>
+        </CardTitle>
+      </CardHeader>
+    </Card>
   </div>)
 }
 ```
@@ -85,7 +85,16 @@ Modify the `<OwnedObjects />` component to display only `Hero` NFTs:
 
 - Add the `filter: { StructType: "<PACKAGE_ID>::hero::Hero" }` option to the `getOwnedObjects` query.
 
-**Deliverable:** Paste the relevant query code showing the filter.
+<details open>
+<summary>**Deliverable:** Paste the relevant query code showing the filter.</summary>
+
+```ts
+  const { response } = await client.stateService.listOwnedObjects({
+    owner: account.address,
+    objectType: `0xc413c2e2c1ac0630f532941be972109eae5d6734e540f20109d75a59a1efea1e::hero::Hero`
+  });
+```
+</details>
 
 ### 4. Auto-Refresh After Mint
 
@@ -94,7 +103,15 @@ After a successful mint transaction:
 - Use `suiClient.waitForTransaction({ digest })` to wait for finality.
 - Use `queryClient.invalidateQueries()` to refresh the owned objects list.
 
-**Deliverable:** Paste the code that handles post-mint refresh.
+<details open>
+<summary>**Deliverable:** Paste the code that handles post-mint refresh.</summary>
+
+```ts
+const result = await signAndExecuteTransaction({transaction: tx})
+await client.waitForTransaction({result});
+await queryClient.invalidateQueries({queryKey: ["ownedObjects", account.address]})
+```
+</details>
 
 ### 5. Conceptual Questions
 
@@ -142,7 +159,70 @@ Complete the first two tasks from the H1 exercise:
     - Requires the payment to be exactly 5 SUI.
     - Mints and returns the Hero.
 
-**Deliverable:** Paste your modified `version.move` and the `mint_hero_v2` function.
+<details>
+<summary>**Deliverable:** Paste your modified `version.move` and the `mint_hero_v2` function.</summary>
+
+```ts
+module package_upgrade::version;
+
+use sui::package::Publisher;
+
+/// Shared object with `version` which updates on every upgrade.
+/// Used as input to force the end-user to use the latest contract version.
+public struct Version has key {
+    id: UID,
+    version: u64
+}
+
+const EInvalidPackageVersion: u64 = 0;
+const EInvalidPublisher: u64 = 1;
+
+// Task: Update version to 2
+const VERSION: u64 = 2;
+
+fun init(ctx: &mut TxContext) {
+    transfer::share_object(Version { id: object::new(ctx), version: VERSION })
+}
+
+/// Function checking that the package-version matches the `Version` object.
+public fun check_is_valid(self: &Version) {
+    assert!(self.version == VERSION, EInvalidPackageVersion);
+}
+
+public fun migrate(pub: &Publisher, version: &mut Version) {
+    assert!(pub.from_package<Version>(), EInvalidPublisher);
+    version.version = VERSION;
+}
+
+#[test_only]
+public fun init_for_testing(ctx: &mut TxContext) {
+    init(ctx);
+}
+```
+
+```ts
+/// @deprecated: `mint_hero` is deprecated. Use `mint_hero_v2` instead.
+public fun mint_hero(_version: &Version, _ctx: &mut TxContext): Hero {
+    abort(EUseMintHeroV2Instead)
+}
+
+/// Anyone can mint a hero, as long as they pay `HERO_PRICE` SUI.
+/// New hero will have 100 health and 10 stamina.
+public fun mint_hero_v2(version: &Version, payment: Coin<SUI>, ctx: &mut TxContext): Hero {
+    version.check_is_valid();
+    let hero = Hero {
+        id: object::new(ctx),
+        health: 100,
+        stamina: 10
+    };
+
+    assert!(payment.value() == HERO_PRICE, EInvalidPrice);
+    transfer::public_transfer(payment, PAYMENT_RECEIVER);
+
+    hero
+}
+```
+</details>
 
 ### 8. Upgrade Policies
 
