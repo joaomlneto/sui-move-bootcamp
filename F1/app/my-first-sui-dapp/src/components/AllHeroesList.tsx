@@ -1,25 +1,34 @@
 import {useCurrentAccount, useCurrentClient} from "@mysten/dapp-kit-react";
 import {useQuery} from "@tanstack/react-query";
 import {Loader2, Package} from "lucide-react";
+import {useHeroRegistryAddress} from "../hooks/useHeroRegistryAddress.ts";
 import {HeroCard} from "./HeroCard.tsx";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "./ui/card";
 
 export function AllHeroesList() {
   const account = useCurrentAccount();
   const client = useCurrentClient();
+  const {data : heroRegistryAddress} = useHeroRegistryAddress();
 
-  const { data, isPending, error } = useQuery({
-    queryKey: ["ownedObjects", account?.address],
+  const { data : heroIds, isPending, error } = useQuery<{ids: string[]}>({
+    queryKey: ["heroRegistry"],
     queryFn: async () => {
       if (!account) return null;
 
-      const { response } = await client.stateService.listOwnedObjects({
-        owner: account.address,
-        objectType: `${import.meta.env.VITE_PACKAGE_ID}::hero::Hero`,
+      const response = await client.getObject({
+        objectId: heroRegistryAddress!,
+        include: { json: true },
       });
-      return response.objects ?? [];
+
+      const json = response.object?.json as {
+        ids: string[]
+      }
+
+      if (!json) return [];
+
+      return json.ids ?? []
     },
-    enabled: !!account,
+    enabled: !!account && !!heroRegistryAddress,
   });
 
   if (!account) {
@@ -40,19 +49,19 @@ export function AllHeroesList() {
           <p className="text-destructive-foreground">
             Error: {(error as Error)?.message || "Unknown error"}
           </p>
-        ) : isPending || !data ? (
+        ) : isPending || !heroIds ? (
           <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" />
             Loading heroes...
           </div>
-        ) : data.length === 0 ? (
+        ) : heroIds.length === 0 ? (
           <p className="text-muted-foreground">No heroes found</p>
         ) : (
           <div className="space-y-2">
-            {data.map((object) => (
+            {heroIds.map((object) => (
               <HeroCard
-                key={object.objectId}
-                heroId={object.objectId!}
+                key={object}
+                heroId={object!}
               />
             ))}
           </div>
